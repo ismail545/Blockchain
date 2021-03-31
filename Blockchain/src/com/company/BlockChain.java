@@ -18,10 +18,10 @@ public class BlockChain {
         this.difficulty = difficulty;
     }
 
-    public BlockChain () {
+    public BlockChain() {
 
         this.chain.add(createGenesisBlock());
-        this.difficulty =2;
+        this.difficulty = 2;
         this.miningReward = 100;
         this.pendingTransactions.clear();
 
@@ -29,14 +29,14 @@ public class BlockChain {
     }
 
     public Block createGenesisBlock() {
-        Transaction genesis = new Transaction("123","798", 345);
+        Transaction genesis = new Transaction("123", "798", 345);
         ArrayList<Transaction> GenesisList = new ArrayList<>();
         GenesisList.add(genesis);
-        return new Block("3/05", GenesisList, 0);
+        return new Block("3/05", GenesisList, "0");
     }
 
     public Block getLatestBlock() {
-        return this.chain.get(chain.size()-1);
+        return this.chain.get(chain.size() - 1);
     }
 
 //    public void addBlock(Block newBlock) {
@@ -57,18 +57,16 @@ public class BlockChain {
         this.pendingTransactions.add(new Transaction(null, miningRewardAddress, this.miningReward));
 
 
-
-
     }
 
-    public void createTransaction(Transaction transaction){
+    public void createTransaction(Transaction transaction) {
         this.pendingTransactions.add(transaction);
     }
 
-    public int getBalanceOfAddress(String address){
+    public int getBalanceOfAddress(String address) {
         int balance = 0;
-        for (Block block:this.chain){
-            for (Transaction trans: block.Transactions) {
+        for (Block block : this.chain) {
+            for (Transaction trans : block.Transactions) {
                 if (trans.getFromAddress() == address) {
                     balance -= trans.getAmount();
                 }
@@ -76,7 +74,7 @@ public class BlockChain {
                 if (trans.getToAddress() == address) {
                     balance += trans.getAmount();
                 }
-                
+
             }
 
         }
@@ -85,27 +83,26 @@ public class BlockChain {
     }
 
 
-    public boolean isBlockChainValid() {
-        for (int i = 1; i < this.chain.size(); i++ ){
-            Block currentBlock = this.chain.get(i);
-            Block previousBlock = this.chain.get(i - 1);
+//    public boolean isBlockChainValid() {
+////        for (int i = 1; i < this.chain.size(); i++ ){
+////            Block currentBlock = this.chain.get(i);
+////            Block previousBlock = this.chain.get(i - 1);
+////
+////            if (! (currentBlock.getHash().equals(this.calculateHash()))) {
+////                //System.out.println(currentBlock.getTransactions());
+////                return false;
+////            }
+////
+////            if (currentBlock.getPreviousHash() != previousBlock.getHash()) {
+////                return false;
+////            }
+////
+////        }
+////
+////        return true;
+////    }
+//
+//
+//    }
 
-            if (currentBlock.getHash() != currentBlock.calculateHash()) {
-                //System.out.println(currentBlock.getTransactions());
-                return false;
-            }
-
-            if (currentBlock.getPreviousHash() != previousBlock.getHash()) {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return this.chain.toString();
-    }
 }

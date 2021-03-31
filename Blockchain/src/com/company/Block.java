@@ -17,7 +17,7 @@ public class Block {
     private String timestamp;
     public ArrayList<Transaction> Transactions = new ArrayList<>();
     private int previousHash;
-    private int hash;
+    private String hash;
     private int nonce;
 
     public int getNonce() {
@@ -28,11 +28,11 @@ public class Block {
         this.nonce = nonce;
     }
 
-    public int getHash() {
+    public String getHash() {
         return hash;
     }
 
-    public void setHash(int hash) {
+    public void setHash(String hash) {
         this.hash = hash;
     }
 
@@ -62,7 +62,7 @@ public class Block {
 
 
 
-    public Block(String timestamp, ArrayList<Transaction> Transactions, int previousHash) {
+    public Block(String timestamp, ArrayList<Transaction> Transactions, String previousHash) {
 
 
         this.timestamp = timestamp ;
@@ -73,34 +73,39 @@ public class Block {
     }
 
 
-    public int calculateHash() {
+    public String calculateHash() {
 
         Object[] items = {this.Transactions, this.previousHash, this.timestamp, this.nonce};
 
-        return Arrays.hashCode(items);
+        String calculatedHash = Block.applySha256(
+                previousHash +
+                        Transactions.toString() +
+                        timestamp + nonce);
+
+        return calculatedHash;
 
     }
 
-//    public static String applySha256(String input){
-//        try {
-//            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-//            //Applies sha256 to our input,
-//            byte[] hash = digest.digest(input.getBytes("UTF-8"));
-//            StringBuffer hexString = new StringBuffer(); // This will contain hash as hexidecimal
-//            for (int i = 0; i < hash.length; i++) {
-//                String hex = Integer.toHexString(0xff & hash[i]);
-//                if(hex.length() == 1) hexString.append('0');
-//                hexString.append(hex);
-//            }
-//            return hexString.toString();
-//        }
-//        catch(Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public static String applySha256(String input){
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            //Applies sha256 to our input,
+            byte[] hash = digest.digest(input.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer(); // This will contain hash as hexidecimal
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        }
+        catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void mineBlock(int difficulty){
-        String strHash = getStrHash(this.hash);
+        String strHash = this.hash;
         //System.out.println(this.hash + "STRHASH1: " + strHash);
         char[] c = new char[difficulty];
         Arrays.fill(c, '1');
@@ -109,13 +114,13 @@ public class Block {
         //System.out.println("substring "+ strHash.substring(0,difficulty));
         while(strHash.substring(0, difficulty) != result){
 
-            this.nonce = this.nonce + 3454;
+            this.nonce++;
             this.hash = this.calculateHash();
             System.out.println("SUBSTRING "+ strHash.substring(0,difficulty));
             System.out.println("result: " + result);
             System.out.println("hash: " + this.hash);
             System.out.println("hash: " + this.hash);
-            strHash = getStrHash(this.hash);
+            strHash = this.hash;
             if (strHash.substring(0, difficulty).equals(result)){
                 System.out.println("ITS BROKENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
                 break;
@@ -127,10 +132,7 @@ public class Block {
 
     }
 
-    public String getStrHash(int hash){
-        String strHash = String.valueOf(hash);
-        return strHash;
-    }
+
 
 
 }
